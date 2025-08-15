@@ -1,34 +1,196 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lista de Tareas</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Datos Temporales</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fc;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"], input[type="email"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .action-buttons button {
+            background-color: #ff5733;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .action-buttons button:hover {
+            background-color: #d94b2b;
+        }
+
+        .update-button {
+            background-color: #4CAF50;
+        }
+
+        .update-button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-  <h1>Lista de Tareas</h1>
-  <ul id="taskList"></ul>
 
-  <script>
-    const taskList = document.getElementById('taskList');
+<div class="container">
+    <div class="header">
+        <h1>JHON CHASI</h1>
+        <p>Agregar, editar y eliminar datos de manera temporal.</p>
+    </div>
 
-    // Función para cargar las tareas desde el servidor
-    async function fetchTasks() {
-      const response = await fetch('/api/tasks');
-      const tasks = await response.json();
+    <div class="form-container">
+        <form id="dataForm">
+            <input type="text" id="nombre" placeholder="Nombre" required>
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="number" id="edad" placeholder="Edad" required>
+            <button type="submit" class="button">Agregar</button>
+        </form>
+    </div>
 
-      tasks.forEach(task => {
-        const listItem = document.createElement('li');
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        listItem.textContent = task.title;
+    <div class="action-buttons">
+        <h2>Datos Registrados</h2>
+    </div>
 
-        taskList.appendChild(listItem);
-        listItem.insertBefore(checkbox, listItem.firstChild);
-      });
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Edad</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Aquí se insertarán los datos temporalmente con JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    const form = document.getElementById('dataForm');
+    const tableBody = document.querySelector('#dataTable tbody');
+    let currentEditIndex = null;
+
+    // Función para agregar o editar datos
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const nombre = document.getElementById('nombre').value;
+        const email = document.getElementById('email').value;
+        const edad = document.getElementById('edad').value;
+
+        // Si estamos editando, actualizamos la fila
+        if (currentEditIndex !== null) {
+            const row = tableBody.rows[currentEditIndex];
+            row.cells[0].innerText = nombre;
+            row.cells[1].innerText = email;
+            row.cells[2].innerText = edad;
+            currentEditIndex = null;
+        } else {
+            // Si estamos agregando, insertamos una nueva fila
+            const newRow = tableBody.insertRow();
+            newRow.innerHTML = `
+                <td>${nombre}</td>
+                <td>${email}</td>
+                <td>${edad}</td>
+                <td>
+                    <button class="update-button" onclick="editRow(this)">Editar</button>
+                    <button onclick="deleteRow(this)">Eliminar</button>
+                </td>
+            `;
+        }
+
+        // Limpiar el formulario
+        form.reset();
+    });
+
+    // Función para editar una fila
+    function editRow(button) {
+        const row = button.parentNode.parentNode;
+        document.getElementById('nombre').value = row.cells[0].innerText;
+        document.getElementById('email').value = row.cells[1].innerText;
+        document.getElementById('edad').value = row.cells[2].innerText;
+        
+        // Establecer el índice de la fila que se está editando
+        currentEditIndex = row.rowIndex - 1;  // Ajustamos por el encabezado
     }
 
-    fetchTasks();
-  </script>
+    // Función para eliminar una fila
+    function deleteRow(button) {
+        const row = button.parentNode.parentNode;
+        row.remove();
+    }
+</script>
+
 </body>
 </html>
