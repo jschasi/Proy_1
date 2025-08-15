@@ -1,0 +1,22 @@
+name: SSH Command Execution
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Connect via SSH and run command
+      uses: appleboy/ssh-action@master
+      with:
+        host: 34.27.119.80 # Reemplaza con la dirección del servidor
+        username: dev.danielboggiano  # Reemplaza con el nombre de usuario para SSH
+        key: ${{ secrets.SERVER_SSH_PRIVATE_KEY }}
+        port: 22  # Puerto SSH (generalmente es 22, pero puede variar)
+        script: |
+          echo "Conexión SSH exitosa"
+          cd /home/dev.danielboggiano/docker-gcp-deployment && sudo sh deploy.sh

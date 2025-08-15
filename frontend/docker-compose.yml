@@ -1,0 +1,15 @@
+version: '3'
+services:
+  frontend:
+    build:
+      context: . # Ruta al directorio donde se encuentra tu Dockerfile y la aplicación de frontend
+      dockerfile: Dockerfile    # Nombre de tu Dockerfile
+    image: frontend
+    ports:
+      - "80"
+    networks:
+      - demo_deploy
+
+networks:
+  demo_deploy:
+    external: true

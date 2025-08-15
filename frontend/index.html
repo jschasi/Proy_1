@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Tareas</title>
+</head>
+<body>
+  <h1>Lista de Tareas</h1>
+  <ul id="taskList"></ul>
+
+  <script>
+    const taskList = document.getElementById('taskList');
+
+    // Función para cargar las tareas desde el servidor
+    async function fetchTasks() {
+      const response = await fetch('/api/tasks');
+      const tasks = await response.json();
+
+      tasks.forEach(task => {
+        const listItem = document.createElement('li');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        listItem.textContent = task.title;
+
+        taskList.appendChild(listItem);
+        listItem.insertBefore(checkbox, listItem.firstChild);
+      });
+    }
+
+    fetchTasks();
+  </script>
+</body>
+</html>

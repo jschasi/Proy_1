@@ -1,0 +1,15 @@
+version: '3'
+services:
+  backend:
+    build:
+      context: . # Ruta al directorio donde se encuentra tu Dockerfile y la aplicación de backend
+      dockerfile: Dockerfile    # Nombre de tu Dockerfile
+    image: backend
+    ports:
+      - "3000"
+    networks:
+      - demo_deploy
+
+networks:
+  demo_deploy:
+    driver: bridge
